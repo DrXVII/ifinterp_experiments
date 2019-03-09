@@ -1,0 +1,7 @@
+#editor temporary files (e.g. swapfiles, backups, etc)
+~*
+*.swp
+
+#compiled binaries
+*.o
+ifinterp
