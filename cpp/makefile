@@ -10,8 +10,11 @@ OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ_DIR) $(OBJ)
 	$(LD) -o $@ $(OBJ)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) -o $@ $(INCLUDE) $(CXX_FLAGS) -c $<
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
