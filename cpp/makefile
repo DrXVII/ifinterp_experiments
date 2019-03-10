@@ -5,7 +5,9 @@ CXX_FLAGS = -std=c++17 -Wall -Wextra
 SRC_DIR = src
 INC_DIR = inc
 OBJ_DIR = obj
-_OBJ = main.o
+INCLUDE = -I$(INC_DIR)
+_OBJ = main.o \
+       Object.o
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 
 all: $(NAME)
