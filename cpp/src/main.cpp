@@ -75,13 +75,6 @@ int main()
         std::getline(std::cin, command);
 
         process_command(command, &world, player.get_location());
-
-        //supporting only one word commands for this experiment
-        //auto action = world.m_one_obj_actions.find(command);
-        //if(action != world.m_one_obj_actions.end()) {
-        //    action->second(&player);
-        //}
-        //else {std::cout << "pardon, I didn't understand that\n";}
     }
 
     return 0;
@@ -160,4 +153,5 @@ void process_command(std::string command, World* world, Object* location)
     //else {std::cerr << "object not found\n";}
 
     if(action && object1) {(*action)(object1);}
+    else {std::cout << "Sorry, I'm not sure what you mean.\n";}
 }

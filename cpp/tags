@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+OBJECT_HPP	src/Object.hpp	2;"	d
+Object	src/Object.cpp	/^Object::Object(const std::string& name, const std::string& description)$/;"	f	class:Object
+Object	src/Object.hpp	/^class Object {$/;"	c
+World	src/main.cpp	/^World::World()$/;"	f	class:World
+World	src/main.cpp	/^struct World {$/;"	s	file:
+add_object	src/Object.cpp	/^void Object::add_object(Object* obj)$/;"	f	class:Object
+find_action	src/main.cpp	/^std::function<void(Object*)>* find_action(std::string str, std::map<std::string, std::function<void(Object*)>>* actions)$/;"	f
+find_obj	src/main.cpp	/^Object* find_obj(const std::string& str, std::vector<Object*>* objects)$/;"	f
+get_contents	src/Object.cpp	/^std::vector<Object*>* Object::get_contents() {return &m_contents;}$/;"	f	class:Object
+get_description	src/Object.cpp	/^std::string Object::get_description() {return m_description;}$/;"	f	class:Object
+get_location	src/Object.cpp	/^Object* Object::get_location() {return m_location;}$/;"	f	class:Object
+get_name	src/Object.cpp	/^std::string Object::get_name() {return m_name;}$/;"	f	class:Object
+get_nth_word	src/main.cpp	/^std::string get_nth_word(const std::string& str, const std::string& sep,$/;"	f
+list_contents	src/Object.cpp	/^void Object::list_contents()$/;"	f	class:Object
+m_aliases	src/main.cpp	/^    std::map<std::string, std::string> m_aliases;$/;"	m	struct:World	file:
+m_contents	src/Object.hpp	/^    std::vector<Object*> m_contents;$/;"	m	class:Object
+m_description	src/Object.hpp	/^    std::string m_description;$/;"	m	class:Object
+m_location	src/Object.hpp	/^    Object* m_location;$/;"	m	class:Object
+m_name	src/Object.hpp	/^    std::string m_name;$/;"	m	class:Object
+m_one_obj_actions	src/main.cpp	/^        m_one_obj_actions;$/;"	m	struct:World	file:
+m_two_obj_actions	src/main.cpp	/^        m_two_obj_actions;$/;"	m	struct:World	file:
+main	src/main.cpp	/^int main()$/;"	f
+process_command	src/main.cpp	/^void process_command(std::string command, World* world, Object* location)$/;"	f
