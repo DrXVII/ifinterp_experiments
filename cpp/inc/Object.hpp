@@ -15,7 +15,10 @@ public:
     std::vector<Object*>* get_contents();
 
     void add_object(Object* obj);
-    void list_contents();
+    /* removes the obj from m_contents
+     * CAUTION: does not free memory, obj has to be deallocated elsewhere*/
+    void remove_object(Object* obj);
+    void list_contents(bool silent = true);
 
 private:
     std::string m_name;

@@ -44,8 +44,10 @@ int main()
             [](Object* player) {
                 if(player == nullptr) {return;}
 
-                std::cout << player->get_location()->get_name() << std::endl;
-                std::cout << player->get_location()->get_description() << std::endl;
+                std::cout << player->get_location()->get_name()
+                    << std::endl;
+                std::cout << player->get_location()->get_description()
+                    << std::endl;
             }
     });
 
@@ -55,6 +57,16 @@ int main()
                 if(!obj) {return;}
 
                 std::cout << obj->get_description() << std::endl;
+                obj->list_contents();
+            }
+    });
+
+    world.m_two_obj_actions.insert({
+            "put into",
+            [](Object* obj, Object* cont) {
+                if(!obj || !cont) {return;}
+
+                cont->add_object(obj);
             }
     });
 
@@ -64,9 +76,11 @@ int main()
     Object book_of_jnanin ("book of Jnanin",
             "beautiful golden letters inset in a cover of green leather "
             "read\"Jnanin\"");
+    Object box ("box", "a simple wooden box");
+    box.add_object(&book);
 
     start_room.add_object(&player);
-    start_room.add_object(&book);
+    start_room.add_object(&box);
     start_room.add_object(&book_of_jnanin);
 
     std::string command;
@@ -105,6 +119,7 @@ std::string get_nth_word(const std::string& str, const std::string& sep,
     return "";
 }
 
+//find object that matches the longest part of the command string from beginning
 Object* find_obj(const std::string& str, std::vector<Object*>* objects)
 {
     Object* candidate {nullptr};
@@ -123,35 +138,85 @@ Object* find_obj(const std::string& str, std::vector<Object*>* objects)
     return candidate;
 }
 
-std::function<void(Object*)>* find_action(std::string str, std::map<std::string, std::function<void(Object*)>>* actions)
+std::function<void(Object*)>* find_action(std::string str, std::map<std::string,
+        std::function<void(Object*)>>* actions)
 {
     auto search = actions->find(str);
     if(search != actions->end()) {return &search->second;}
     else {return nullptr;}
 }
 
+std::function<void(Object*, Object*)>* find_action2(std::string str,
+        std::map<std::string, std::function<void(Object*, Object*)>>* actions)
+{
+    auto search = actions->find(str);
+    if(search != actions->end()) {return &search->second;}
+    else {return nullptr;}
+}
+
+//TODO looks convoluted, should revise
 void process_command(std::string command, World* world, Object* location)
 {
     /*algorhithm logic:
      * typical action signature: '<verb> [article] <noun> [<connector> [article] <noun>]
      * TODO check for aliases
-     * TODO (refine) check first word to determine candidate list of actions
-     * TODO (refine) check remaining string against local objects (pick longest match)
-     * TODO (later) if there's more, check what's left against second word of function(s) in candidate list
-     * TODO (later) what's left is our second object - find that among local objects
+     * TODO handle articles
     */
 
-    std::string action_word = get_nth_word(command, " ");
-    command.erase(0, action_word.size() + 1); //removing the action word
+    std::string action_word1 = get_nth_word(command, " ");
+    command.erase(0, action_word1.size() + 1); //removing the action word
     std::function<void(Object*)>* action {nullptr};
-    action = find_action(action_word, &world->m_one_obj_actions);
-    //if(action) {std::cerr << "action: found\n";}
-    //else {std::cerr << "action: not found\n";}
+
+    action = find_action(action_word1, &world->m_one_obj_actions);
 
     Object* object1 = find_obj(command, location->get_contents());
-    //if(object1) {std::cerr << "object: " << object1->get_name() << std::endl;}
-    //else {std::cerr << "object not found\n";}
+    if(object1 == nullptr && command.size() > 0) {
+        std::cout << "You don't see such an item\n";
+        std::cout << "DBG: " << command << std::endl;
+        return;
+    }
 
-    if(action && object1) {(*action)(object1);}
-    else {std::cout << "Sorry, I'm not sure what you mean.\n";}
+    if(object1) {command.erase(0, object1->get_name().size() + 1);}
+
+    if(command.empty()) {
+        if(action && object1) {(*action)(object1);}
+        else if(action == nullptr && object1 == nullptr) {
+            std::cout << "Sorry, I'm not sure what you mean.\n";
+        }
+        else if(action) {
+            std::cout << "What do you want to " << action_word1 << "?\n";
+        }
+        else if(object1) {
+            std::cout << action_word1 << " is not something you can do to "
+                << object1->get_name() << ".\n";
+        }
+
+        return;
+    }
+
+    /*if something is still left in the command string, we have to find the
+     * second action word and the second object*/
+
+    std::string action_word2 = get_nth_word(command, " ");
+    command.erase(0, action_word2.size() + 1);
+
+    std::string action_word_combo {action_word1 + " " + action_word2};
+
+    std::function<void(Object*, Object*)>* action2 {
+        find_action2(action_word_combo, &world->m_two_obj_actions)
+    };
+
+    if(action2 == nullptr) {
+        std::cout << action_word_combo << " is not something you can do.\n";
+    }
+
+    Object* object2 = find_obj(command, location->get_contents());
+
+    //DBG
+    //std::cout << "act: " << action_word_combo << std::endl;
+    //if(object1) {std::cout << "o1: " << object1->get_name() << std::endl;}
+    //if(object2) {std::cout << "o2: " << object2->get_name() << std::endl;}
+
+    if(action2 && object1 && object2) {(*action2)(object1, object2);}
+    else {std::cout << "Sorry, that's not something I can understand.\n";}
 }
