@@ -6,6 +6,13 @@
 
 #include "Object.hpp"
 
+//TODO the action "take"
+//TODO the action "look (around)"
+//TODO one action functions made up of more than one word
+//TODO directions
+//TODO movement between rooms
+
+//TODO convert World into a class with setters and getters
 struct World {
     World();
 
@@ -39,17 +46,6 @@ int main()
     std::cout << "Hello worlds!\n";
 
     World world;
-    world.m_one_obj_actions.insert({
-            "look",
-            [](Object* player) {
-                if(player == nullptr) {return;}
-
-                std::cout << player->get_location()->get_name()
-                    << std::endl;
-                std::cout << player->get_location()->get_description()
-                    << std::endl;
-            }
-    });
 
     world.m_one_obj_actions.insert({
             "examine",
@@ -125,12 +121,16 @@ Object* find_obj(const std::string& str, std::vector<Object*>* objects)
     Object* candidate {nullptr};
 
     for(Object* object : *objects) {
+        //recursion
+        if(object->get_contents()->size() > 0) {
+            candidate = find_obj(str, object->get_contents());
+        }
+
         size_t pos {str.find(object->get_name())};
         if(pos > 0) {continue;}
 
-        //std::cerr << "pos: " << pos << " obj: " << object->get_name() << std::endl;
-
-        if(!candidate || candidate->get_name().size() < object->get_name().size()) {
+        if(!candidate
+        || candidate->get_name().size() < object->get_name().size()) {
             candidate = object;
         }
     }
